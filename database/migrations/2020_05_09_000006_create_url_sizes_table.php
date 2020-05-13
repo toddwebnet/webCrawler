@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateQueueLinksTable extends Migration
+class CreateUrlSizesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class CreateQueueLinksTable extends Migration
      */
     public function up()
     {
-        Schema::create('queue_links', function (Blueprint $table) {
+        Schema::create('url_sizes', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('link_id');
+            $table->unsignedBigInteger('url_id');
+            $table->unsignedBigInteger('size');
+            $table->integer('timestamp');
         });
     }
 
@@ -26,6 +28,6 @@ class CreateQueueLinksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('queue_links');
+        Schema::dropIfExists('url_sizes');
     }
 }

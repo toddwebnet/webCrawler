@@ -5,8 +5,11 @@ namespace App\Console\Commands;
 
 use App\Jobs\TestLogJob;
 use App\Models\Url;
+use App\Models\UrlSizes;
 use App\Services\HtmlParserService;
 use App\Services\Providers\HtmlProvider;
+use App\Services\Queues\QueueHtmlService;
+use App\Services\Queues\QueueUrlService;
 use App\Services\QueueService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
@@ -17,10 +20,14 @@ class Test extends Command
 
     public function handle()
     {
-        app()->make(QueueService::class)->sendToQueue(TestLogJob::class, [
-            'logStatement' => 'QueueTest',
-            'test'
-        ]);
+
+         //app()->make(QueueUrlService::class)->process(1);
+
+        app()->make(QueueHtmlService::class)->process(1);
+
+        dump(
+            UrlSizes::getTodayCount()
+        );
 
     }
 

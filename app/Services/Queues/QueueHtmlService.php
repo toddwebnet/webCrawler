@@ -6,7 +6,9 @@ use App\Models\Html;
 use App\Models\QueueHtml;
 use App\Models\Url;
 use App\Services\Providers\LinkProvider;
+use App\Services\S3StorageService;
 use App\Services\UrlParserService;
+use GuzzleHttp\Psr7\Stream;
 use Illuminate\Support\Facades\Log;
 use PHPHtmlParser\Dom;
 
@@ -31,9 +33,14 @@ class QueueHtmlService
     {
         $url = Url::find($html->url_id);
         $urlParser = app()->make(UrlParserService::class, ['url' => $url->url]);
+        /** @var Stream $bodyStream */
+        $bodyStream = app()->make(S3StorageService::class)
+            ->getObject($html->html);
 
         $dom = new Dom();
-        $dom->load(utf8_encode($html->html));
+        $dom->load(
+        utf8_encode(    $bodyStream->getContents())
+        );
 
         $links = $dom->find('a');
         $linkProvider = app()->make(LinkProvider::class);

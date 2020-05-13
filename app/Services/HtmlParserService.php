@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\UrlSizes;
+use Aws\Result;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Stream;
 
 class HtmlParserService
 {
@@ -12,14 +15,36 @@ class HtmlParserService
      * @return string
      * @throws \Exception
      */
-    public function getUrl($url)
+    public function getUrl($url, $options = [])
     {
         $client = new Client();
-        $res = $client->request('GET', $url);
+        $res = $client->request('GET', $url->url);
 
-        if ($this->isValidHtml($res)) {
-            return $res->getBody()->getContents();
+        if (!in_array('validate', $options) && !$this->isValidHtml($res)) {
+            throw new \Exception("Invalid Html in Url");
         }
+        $bodyStream = $res->getBody();
+        if (in_array('log_sizes', $options)) {
+            UrlSizes::create([
+                'url_id' => $url->id,
+                'size' => $bodyStream->getSize(),
+                'timestamp' => time(),
+            ]);
+        }
+        return $bodyStream;
+    }
+
+    public function getS3Url($url, $options = [])
+    {
+
+        return $this->saveBodyToS3($this->getUrl($url, $options));
+    }
+
+    private function saveBodyToS3(Stream $stream)
+    {
+        /** @var Result $result */
+        $result = app()->make(S3StorageService::class)->putObject($stream);
+        return $result['key'];
 
     }
 

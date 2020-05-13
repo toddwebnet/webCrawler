@@ -16,7 +16,7 @@ class CreateHtmlTable extends Migration
         Schema::create('htmls', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('url_id');
-            $table->longText('html');
+            $table->string('html', 2048);
             $table->boolean('is_valid')->default(true);
             $table->timestamps();
         });

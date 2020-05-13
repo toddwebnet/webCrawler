@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Str;
 
-return [
+$database = [
 
     /*
     |--------------------------------------------------------------------------
@@ -143,5 +143,5 @@ return [
         ],
 
     ],
-
 ];
+return $database;

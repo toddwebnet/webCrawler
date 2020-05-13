@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateQueueUrlsTable extends Migration
+class CreateUrlOverflowsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateQueueUrlsTable extends Migration
      */
     public function up()
     {
-        Schema::create('queue_urls', function (Blueprint $table) {
+        Schema::create('url_overflows', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('url_id');
         });
@@ -26,6 +26,6 @@ class CreateQueueUrlsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('queue_urls');
+        Schema::dropIfExists('url_overflows');
     }
 }
