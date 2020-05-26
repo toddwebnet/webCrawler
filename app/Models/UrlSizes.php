@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class UrlSizes extends Model
 {
-    const DAILY_DOWNLOAD_LIMIT = 10000000;//100000000;//100,000,000;
 
     protected $fillable = [
         'url_id',
@@ -22,6 +21,6 @@ class UrlSizes extends Model
 
     public static function allowDownloads()
     {
-        return self::getTodayCount() < self::DAILY_DOWNLOAD_LIMIT;
+        return self::getTodayCount() < env('DAILY_DOWNLOAD_LIMIT', 100000);
     }
 }

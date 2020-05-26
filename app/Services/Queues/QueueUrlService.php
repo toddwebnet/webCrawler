@@ -15,10 +15,6 @@ class QueueUrlService
 
     public function process($urlId)
     {
-        if (!UrlSizes::allowDownloads()) {
-
-            return;
-        }
         $url = Url::find($urlId);
 
         if ($url === null) {

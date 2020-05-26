@@ -14,7 +14,8 @@ class AddUrlToQueue extends Command
     public function handle()
     {
         $url = $this->argument('url');
-        app()->make(UrlProvider::class)->addNewUrl($url);
+        $urlObj = app()->make(UrlProvider::class)->addNewUrl($url);
+
         $this->line('done');
 
 

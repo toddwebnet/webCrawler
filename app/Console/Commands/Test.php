@@ -21,12 +21,12 @@ class Test extends Command
     public function handle()
     {
 
-         //app()->make(QueueUrlService::class)->process(1);
-
-        app()->make(QueueHtmlService::class)->process(1);
 
         dump(
             UrlSizes::getTodayCount()
+        );
+        dump(
+            UrlSizes::allowDownloads()
         );
 
     }
