@@ -7,6 +7,7 @@ use App\Models\QueueUrl;
 use App\Models\Url;
 use App\Models\UrlOverflow;
 use App\Models\UrlSizes;
+use App\Services\Queues\QueueUrlService;
 use App\Services\QueueService;
 use App\Services\UrlParserService;
 use Carbon\Carbon;
@@ -19,23 +20,12 @@ class UrlProvider
      */
     public function addNewUrl($url)
     {
-
         $urlObj = $this->getObj($url);
         if ($urlObj->last_refreshed === null) {
             UrlOverflow::create(['url_id' => $urlObj->id]);
         }
         return $urlObj;
 
-    }
-
-    public function addUrlObjToQueue(Url $url)
-    {
-
-        app()->make(QueueService::class)->sendToQueue(UrlJob::class, [
-            'urlId' => $url->id
-        ], 'urls');
-        $url->last_refreshed = new Carbon();
-        $url->save();
     }
 
     /**
@@ -52,6 +42,16 @@ class UrlProvider
             Log::info('------------------------ STOPPED: ' . $url);
         }
         return $urlObj;
+    }
+
+    public function addUrlObjToQueue(Url $url)
+    {
+
+        app()->make(QueueService::class)->sendToQueue(UrlJob::class, [
+            'urlId' => $url->id
+        ], 'urls');
+        $url->last_refreshed = new Carbon();
+        $url->save();
     }
 
     public function popToQueue()

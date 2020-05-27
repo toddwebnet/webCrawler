@@ -10,6 +10,7 @@ namespace App\Services;
 use App\Helpers\Utils;
 use Aws\S3\S3Client;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Stream;
 
 class S3StorageService
 {
@@ -31,10 +32,10 @@ class S3StorageService
         $this->bucket = env('AWS_BUCKET');
     }
 
-    public function putObject($fileStream)
+    public function putObject(Stream $fileStream)
     {
         $key = $this->getRandomPathName();
-        $response =  $this->s3Client->putObject([
+        $response = $this->s3Client->putObject([
             'Bucket' => $this->bucket,
             'Key' => $key, //add path here
             'Body' => $fileStream,
@@ -42,21 +43,20 @@ class S3StorageService
         ]);
         if (
             $response['ObjectURL'] &&
-            strpos($response['ObjectURL'], $key)!==false
+            strpos($response['ObjectURL'], $key) !== false
         ) {
             $response['key'] = $key;
-        }else{
+        } else {
             throw new \Exception("S3 not saving right");
         }
         return $response;
 
     }
 
-
     public function getUrl($objectUrl)
     {
         $client = new Client();
-        $res = $client->request('GET',$objectUrl);
+        $res = $client->request('GET', $objectUrl);
         return $res->getBody();
     }
 

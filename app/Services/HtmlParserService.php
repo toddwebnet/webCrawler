@@ -24,10 +24,14 @@ class HtmlParserService
             throw new \Exception("Invalid Html in Url");
         }
         $bodyStream = $res->getBody();
+        $size = $bodyStream->getSize();
+        if($size > 1024*1024){
+            throw new \Exception("Data Too Big, skipping");
+        }
         if (in_array('log_sizes', $options)) {
             UrlSizes::create([
                 'url_id' => $url->id,
-                'size' => $bodyStream->getSize(),
+                'size' => $size,
                 'timestamp' => time(),
             ]);
         }
@@ -36,7 +40,6 @@ class HtmlParserService
 
     public function getS3Url($url, $options = [])
     {
-
         return $this->saveBodyToS3($this->getUrl($url, $options));
     }
 

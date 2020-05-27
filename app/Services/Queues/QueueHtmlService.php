@@ -2,6 +2,7 @@
 
 namespace App\Services\Queues;
 
+use App\Helpers\Utils;
 use App\Models\Html;
 use App\Models\QueueHtml;
 use App\Models\Url;
@@ -39,7 +40,7 @@ class QueueHtmlService
 
         $dom = new Dom();
         $dom->load(
-        utf8_encode(    $bodyStream->getContents())
+            utf8_encode($bodyStream->getContents())
         );
 
         $links = $dom->find('a');
@@ -48,8 +49,7 @@ class QueueHtmlService
         foreach ($links as $link) {
 
             if ($link->href &&
-                strpos($link->href, 'javascript:') !== 0 &&
-                strpos($link->href, '#') !== 0
+                $this->isValidLink($link->href)
             ) {
 
                 $link->href = $urlParser->buildFullLinkOnPage(
@@ -69,6 +69,31 @@ class QueueHtmlService
                 }
             }
         }
+
+    }
+
+    public function isValidLink($link)
+    {
+        $isValid = (
+            strpos($link, 'javascript:') !== 0 &&
+            strpos($link, '#') !== 0
+        );
+
+        if ($isValid) {
+            $invalidExts = [
+                'jpg', 'jpeg', 'png', 'mp4', 'mpg', 'mp3', '7z', 'zip',
+                'msi', 'exe', 'arj', 'ace', 'tar', 'gz', 'iso', 'img', 'dmg',
+                'gif', 'xml', 'tif', 'bmp', 'mdb', 'sql', 'dat', 'sqlite',
+                'pub', 'doc', 'docx', 'xls', 'xlsx', 'mdbx', 'log', 'txt', 'md',
+                'pdf', 'asc', 'ascii', 'gpx', 'gml', 'rom', 'ico', 'raw', 'ai', 'psd',
+                'eps', 'vod', 'lnk', 'webloc', 'odf', 'obj', 'class', 'dll', 'jar', 'war',
+                'ps', 'pnp', 'ppt', 'pptx', 'js', 'javascript', 'au3', 'bat', 'vox', 'voc',
+                'ram', 'm3u', 'asx', 'avi', 'fla', 'm4v', 'ogg'
+            ];
+            $isValid = (!in_array(strtolower(Utils::getLinkExt($link)), $invalidExts));
+
+        }
+        return $isValid;
 
     }
 }

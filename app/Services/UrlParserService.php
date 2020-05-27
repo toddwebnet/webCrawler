@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Helpers\Utils;
+
 class UrlParserService
 {
     private $url;
@@ -10,6 +12,18 @@ class UrlParserService
     {
         $this->url = self::cleanUrl($url);
 
+    }
+
+    public function parse()
+    {
+        $url = $this->url;
+        $parsed = parse_url($url);
+        if (!array_key_exists('path', $parsed)) {
+            $parsed['path'] = '/';
+        } else {
+            $parsed['path'] = rtrim($parsed['path'], '/');
+        }
+        return $parsed;
     }
 
     public static function cleanUrl($url)
@@ -27,6 +41,7 @@ class UrlParserService
 
     public function buildFullLinkOnPage($url)
     {
+        Utils::logToFile("{$this->url}\t{$url}");
         $parsedUrl = $this->parse();
 
         if (strpos($url, 'http') === 0) {
@@ -38,20 +53,32 @@ class UrlParserService
         if (strpos($url, '/') === 0) {
             return "{$parsedUrl['scheme']}://{$parsedUrl['host']}{$url}";
         }
+        if (strpos($url, '.') === 0) {
+            return $this->buildRelativeUrl($url);
+        }
         return "{$parsedUrl['scheme']}://{$parsedUrl['host']}{$parsedUrl['path']}/{$url}";
 
     }
 
-    public function parse()
+    public function buildRelativeUrl($link)
     {
-        $url = $this->url;
-        $parsed = parse_url($url);
-        if (!array_key_exists('path', $parsed)) {
-            $parsed['path'] = '/';
-        } else {
-            $parsed['path'] = rtrim($parsed['path'], '/');
+        $parsed = $this->parse();
+        $baseUrl = $this->chopLastSlash($parsed['path']);
+        while (strpos($link, '.') == 0) {
+            if (strpos($link, '../') == 0) {
+                $baseUrl = $this->chopLastSlash($baseUrl);
+                $link = substr($link, 3);
+            } elseif (strpos($link, './') == 0) {
+                $link = substr($link, 3);
+            }
         }
-        return $parsed;
+        return "{$parsed['scheme']}://{$parsed['host']}{$baseUrl}{$link}";
+    }
+
+    private function chopLastSlash($url)
+    {
+        $slashPos = strrpos($url, '/');
+        return (substr($url, 0, $slashPos));
     }
 
 }

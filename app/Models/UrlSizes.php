@@ -3,9 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class UrlSizes extends Model
 {
+<<<<<<< Updated upstream
+=======
+    const DAILY_DOWNLOAD_LIMIT = 120000000;//100000000;//100,000,000;
+>>>>>>> Stashed changes
 
     protected $fillable = [
         'url_id',

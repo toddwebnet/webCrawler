@@ -18,6 +18,7 @@ class UrlJob extends BaseJob
 
     public function handle()
     {
+        Log::info('UrlJob: ' . $this->urlId);
         app()->make(QueueUrlService::class)->process($this->urlId);
     }
 
