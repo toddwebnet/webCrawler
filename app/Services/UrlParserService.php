@@ -2,18 +2,22 @@
 
 namespace App\Services;
 
-use App\Helpers\Utils;
-
 class UrlParserService
 {
     private $url;
 
+    /**
+     * UrlParserService constructor.
+     * @param $url
+     */
     public function __construct($url)
     {
         $this->url = self::cleanUrl($url);
-
     }
 
+    /**
+     * @return array|false|int|string|null
+     */
     public function parse()
     {
         $url = $this->url;
@@ -26,6 +30,10 @@ class UrlParserService
         return $parsed;
     }
 
+    /**
+     * @param $url
+     * @return string
+     */
     public static function cleanUrl($url)
     {
         $lcUrl = strtolower($url);
@@ -39,9 +47,12 @@ class UrlParserService
         return $url;
     }
 
+    /**
+     * @param $url
+     * @return string
+     */
     public function buildFullLinkOnPage($url)
     {
-        Utils::logToFile("{$this->url}\t{$url}");
         $parsedUrl = $this->parse();
 
         if (strpos($url, 'http') === 0) {
@@ -60,25 +71,55 @@ class UrlParserService
 
     }
 
+    /**
+     * @param $link
+     * @return string
+     */
     public function buildRelativeUrl($link)
     {
         $parsed = $this->parse();
         $baseUrl = $this->chopLastSlash($parsed['path']);
-        while (strpos($link, '.') == 0) {
-            if (strpos($link, '../') == 0) {
+        while (strpos($link, '.') === 0) {
+            if (strpos($link, '../') === 0) {
                 $baseUrl = $this->chopLastSlash($baseUrl);
-                $link = substr($link, 3);
-            } elseif (strpos($link, './') == 0) {
-                $link = substr($link, 3);
+                $link = $this->addPreSlash(substr($link, 3));
+            } elseif (strpos($link, './') === 0) {
+                $link = $this->addPreSlash(substr($link, 2));
             }
         }
         return "{$parsed['scheme']}://{$parsed['host']}{$baseUrl}{$link}";
     }
 
+    /**
+     * @param $url
+     * @return false|string
+     */
     private function chopLastSlash($url)
     {
-        $slashPos = strrpos($url, '/');
-        return (substr($url, 0, $slashPos));
+        $slashPos = strrpos(
+            str_replace('://', ':::', $url)
+            , '/');
+        if ($slashPos === false) {
+            return $url;
+        } else {
+            return (substr($url, 0, $slashPos));
+        }
+    }
+
+    /**
+     * @param $link
+     * @return string
+     */
+    private function addPreSlash($link)
+    {
+        if ($link == '') {
+            return $link;
+        }
+        $slashPos = strrpos($link, '/');
+        if ($slashPos !== 0) {
+            $link = '/' . $link;
+        }
+        return $link;
     }
 
 }
