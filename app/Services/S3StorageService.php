@@ -7,10 +7,9 @@
 
 namespace App\Services;
 
-use App\Helpers\Utils;
-use App\Services\Queues\HttpService;
 use Aws\S3\S3Client;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Stream;
 
 class S3StorageService
@@ -61,13 +60,21 @@ class S3StorageService
     public function getObject($objectUrl)
     {
         if (strpos(strtolower($objectUrl), 'http') === 0) {
-            return app()->make(HttpService::class)->getUrl($objectUrl);
+            return $this->getUrl($objectUrl);
         }
         $retrive = $this->s3Client->getObject([
             'Bucket' => $this->bucket,
             'Key' => $objectUrl
         ]);
         return $retrive['Body'];
+    }
+
+    public function getUrl($url)
+    {
+        /** @var Response $res */
+        $client = app()->make(Client::class);
+        $res = $client->request('GET', $url);
+        return $res->getBody();
     }
 
 }

@@ -3,9 +3,11 @@
 namespace Tests\Unit\Services;
 
 use App\Services\PathNameService;
-use App\Services\Queues\HttpService;
+use App\Services\HttpService;
 use App\Services\S3StorageService;
 use Aws\S3\S3Client;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Stream;
 use Tests\TestCase;
 
@@ -89,11 +91,19 @@ class S3StorageServiceTest extends TestCase
         $url = "http://gumby.com";
         $object = "STUFFYSTUFFHERE";
 
-        $this->setMock(HttpService::class)
-            ->shouldReceive('getUrl')
-            ->withArgs([$url])
+        $response = $this->setMock(Response::class)
+            ->shouldReceive('getBody')
+            ->withArgs([])
             ->once()
-            ->andReturn('test');
+            ->andReturn('test')
+            ->getMock();
+
+        $client = $this->setMock(Client::class)
+            ->shouldReceive('request')
+            ->withArgs(['GET', $url])
+            ->once()
+            ->andReturn($response)
+            ->getMock();
 
         $this->s3Client->shouldReceive('getObject')
             ->withArgs([
@@ -112,5 +122,26 @@ class S3StorageServiceTest extends TestCase
         $this->assertEquals('Elvis Lives!', $s3StorageService->getObject($object));
 
     }
+    public function testGetUrl()
+    {
+        $url = "http://dog.com";
 
+        $response = $this->setMock(Response::class)
+            ->shouldReceive('getBody')
+            ->withArgs([])
+            ->once()
+            ->andReturn('test')
+            ->getMock();
+
+        $client = $this->setMock(Client::class)
+            ->shouldReceive('request')
+            ->withArgs(['GET', $url])
+            ->once()
+            ->andReturn($response)
+            ->getMock();
+
+        $httpService = new S3StorageService();
+        $this->assertEquals('test', $httpService->getUrl($url));
+
+    }
 }

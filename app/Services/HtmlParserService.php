@@ -12,23 +12,37 @@ class HtmlParserService
 {
     /**
      * @param $url
+     * @param array $options
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getS3Url($url, $options = [])
+    {
+        return $this->saveBodyToS3(
+            $this->getUrl($url, $options)
+        );
+    }
+
+    /**
+     * @param $url
      * @return string
      * @throws \Exception
      */
     public function getUrl($url, $options = [])
     {
-        $client = new Client();
+        $client = app()->make(Client::class);
         $res = $client->request('GET', $url->url);
 
-        if (!in_array('validate', $options) && !$this->isValidHtml($res)) {
+        if (in_array('validate', $options) && !$this->isValidHtml($res)) {
             throw new \Exception("Invalid Html in Url");
         }
         $bodyStream = $res->getBody();
         $size = $bodyStream->getSize();
-        if($size > 1024*1024){
+        if ($size > 1024 * 1024) {
             throw new \Exception("Data Too Big, skipping");
         }
         if (in_array('log_sizes', $options)) {
+
             UrlSizes::create([
                 'url_id' => $url->id,
                 'size' => $size,
@@ -38,17 +52,16 @@ class HtmlParserService
         return $bodyStream;
     }
 
-    public function getS3Url($url, $options = [])
-    {
-        return $this->saveBodyToS3($this->getUrl($url, $options));
-    }
-
+    /**
+     * @param Stream $stream
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
     private function saveBodyToS3(Stream $stream)
     {
         /** @var Result $result */
         $result = app()->make(S3StorageService::class)->putObject($stream);
         return $result['key'];
-
     }
 
     /**
@@ -69,7 +82,6 @@ class HtmlParserService
                 }
             }
         }
-        throw new \Exception("Invalid Headers");
-
+        return false;
     }
 }
