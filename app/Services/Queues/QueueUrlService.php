@@ -34,7 +34,6 @@ class QueueUrlService
             $url->save();
             return;
         }
-
         app()->make(HtmlProvider::class)->addToQueue(
             $url->id,
             $html

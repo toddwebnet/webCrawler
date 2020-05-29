@@ -38,7 +38,7 @@ class QueueHtmlService
         $bodyStream = app()->make(S3StorageService::class)
             ->getObject($html->html);
 
-        $dom = new Dom();
+        $dom = app()->make(Dom::class);
         $dom->load(
             utf8_encode($bodyStream->getContents())
         );
@@ -51,7 +51,6 @@ class QueueHtmlService
             if ($link->href &&
                 $this->isValidLink($link->href)
             ) {
-
                 $link->href = $urlParser->buildFullLinkOnPage(
                     str_replace(' ', '+',
                         trim($link->href)
@@ -75,10 +74,9 @@ class QueueHtmlService
     public function isValidLink($link)
     {
         $isValid = (
-            strpos($link, 'javascript:') !== 0 &&
+            strpos(strtolower($link), 'javascript:') !== 0 &&
             strpos($link, '#') !== 0
         );
-
         if ($isValid) {
             $invalidExts = [
                 'jpg', 'jpeg', 'png', 'mp4', 'mpg', 'mp3', '7z', 'zip',

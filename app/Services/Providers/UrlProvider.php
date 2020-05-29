@@ -7,6 +7,7 @@ use App\Models\QueueUrl;
 use App\Models\Url;
 use App\Models\UrlOverflow;
 use App\Models\UrlSizes;
+use App\Services\BlacklistService;
 use App\Services\Queues\QueueUrlService;
 use App\Services\QueueService;
 use App\Services\UrlParserService;
@@ -21,6 +22,14 @@ class UrlProvider
     public function addNewUrl($url)
     {
         $urlObj = $this->getObj($url);
+
+        // skipping of its in the blacklist
+        if (app()->make(BlacklistService::class)->isInBlacklist($urlObj->url)) {
+            $urlObj->is_valid = 0;
+            $urlObj->save;
+            return $urlObj;
+        }
+
         if ($urlObj->last_refreshed === null) {
             UrlOverflow::create(['url_id' => $urlObj->id]);
         }

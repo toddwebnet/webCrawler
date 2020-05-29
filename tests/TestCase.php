@@ -16,10 +16,12 @@ abstract class TestCase extends BaseTestCase
         if (!defined('TEST_DB_RESPAWNED')) {
             $dbPath = $this->dbPath();
             if (file_exists($dbPath)) {
-
                 unlink($dbPath);
             }
-            touch($dbPath);
+            if (!file_exists($dbPath)) {
+                dump('creating');
+                touch($dbPath);
+            }
             $this->artisan('migrate:refresh');
             $this->artisan('db:seed');
             define('TEST_DB_RESPAWNED', true);
