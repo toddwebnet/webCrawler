@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\UrlSizes;
+use App\Models\UrlSize;
 use Aws\Result;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
@@ -43,7 +43,7 @@ class HtmlParserService
         }
         if (in_array('log_sizes', $options)) {
 
-            UrlSizes::create([
+            UrlSize::create([
                 'url_id' => $url->id,
                 'size' => $size,
                 'timestamp' => time(),

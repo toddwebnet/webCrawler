@@ -6,7 +6,7 @@ use App\Jobs\UrlJob;
 use App\Models\QueueUrl;
 use App\Models\Url;
 use App\Models\UrlOverflow;
-use App\Models\UrlSizes;
+use App\Models\UrlSize;
 use App\Services\BlacklistService;
 use App\Services\Queues\QueueUrlService;
 use App\Services\QueueService;
@@ -65,7 +65,7 @@ class UrlProvider
 
     public function popToQueue()
     {
-        if (!UrlSizes::allowDownloads()) {
+        if (!UrlSize::allowDownloads()) {
             return;
         }
         $overFlow = UrlOverflow::first();

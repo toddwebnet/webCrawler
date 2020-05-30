@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Helpers\Utils;
 use App\Jobs\TestLogJob;
 use App\Models\Url;
-use App\Models\UrlSizes;
+use App\Models\UrlSize;
 use App\Services\HtmlParserService;
 use App\Services\Providers\HtmlProvider;
 use App\Services\Queues\QueueHtmlService;
@@ -23,10 +23,10 @@ class Test extends Command
     {
 
         dump(
-            UrlSizes::getTodayCount()
+            UrlSize::getTodayCount()
         );
         dump(
-            UrlSizes::allowDownloads()
+            UrlSize::allowDownloads()
         );
 
     }
@@ -41,10 +41,10 @@ class Test extends Command
 
 
         dump(
-            UrlSizes::getTodayCount()
+            UrlSize::getTodayCount()
         );
         dump(
-            UrlSizes::allowDownloads()
+            UrlSize::allowDownloads()
         );
 
     }

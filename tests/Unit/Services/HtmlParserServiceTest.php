@@ -3,7 +3,7 @@
 namespace Tests\Unit\Services;
 
 use App\Models\Url;
-use App\Models\UrlSizes;
+use App\Models\UrlSize;
 use App\Services\HtmlParserService;
 use App\Services\S3StorageService;
 use GuzzleHttp\Client;
@@ -28,7 +28,7 @@ class HtmlParserServiceTest extends TestCase
             'request' => 1,
         ];
         list($urlObject, $stream) = $this->buildGetUrlMocks($host, $url, $size, $contentType, $times);
-        $count = UrlSizes::count();
+        $count = UrlSize::count();
         $htmlParserService = new HtmlParserService();
 
         $return = ['key' => 'some_value'];
@@ -42,7 +42,7 @@ class HtmlParserServiceTest extends TestCase
 
         $result = $htmlParserService->getS3Url($urlObject, $options);
         $this->assertEquals($return['key'], $result);
-        $this->assertEquals(1, UrlSizes::count() - $count);
+        $this->assertEquals(1, UrlSize::count() - $count);
     }
 
     public function testGetUrl1()
@@ -120,12 +120,12 @@ class HtmlParserServiceTest extends TestCase
             'getHeaders' => 1,
             'request' => 1,
         ];
-        $count = UrlSizes::count();
+        $count = UrlSize::count();
         list($urlObject, $stream) = $this->buildGetUrlMocks($host, $url, $size, $contentType, $times);
         $htmlParserService = new HtmlParserService();
         $result = $htmlParserService->getUrl($urlObject, $options);
         $this->assertEquals($stream, $result);
-        $this->assertEquals(1, UrlSizes::count() - $count);
+        $this->assertEquals(1, UrlSize::count() - $count);
     }
 
     public function testGetUrl5()

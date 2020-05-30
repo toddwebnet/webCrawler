@@ -6,7 +6,7 @@ use App\Jobs\UrlJob;
 use App\Models\QueueUrl;
 use App\Models\Url;
 use App\Models\UrlOverflow;
-use App\Models\UrlSizes;
+use App\Models\UrlSize;
 use App\Services\HtmlParserService;
 use App\Services\Providers\HtmlProvider;
 use App\Services\QueueService;
