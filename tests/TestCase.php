@@ -2,12 +2,20 @@
 
 namespace Tests;
 
+use Faker\Factory as Faker;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use PHPUnit\Framework\TestListener;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
+
+    protected $faker;
+
+    public function __construct($name = null, array $data = [], $dataName = '')
+    {
+        $this->faker = Faker::create();
+        parent::__construct($name, $data, $dataName);
+    }
 
     protected function setUp(): void
     {
