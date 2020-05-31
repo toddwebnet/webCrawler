@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Log;
 
 class UrlSize extends Model
 {
-    public const DAILY_DOWNLOAD_LIMIT = 120000000;//100000000;//100,000,000;
 
     protected $fillable = [
         'url_id',
@@ -23,8 +22,17 @@ class UrlSize extends Model
         return self::where('timestamp', '>', strtotime('today 12:00 am'))->sum('size');
     }
 
+    public static function getDailyLimit()
+    {
+        $limit = env('DAILY_DOWNLOAD_LIMIT', 100000);
+        return $limit;
+    }
+
     public static function allowDownloads()
     {
-        return self::getTodayCount() < env('DAILY_DOWNLOAD_LIMIT', 100000);
+        $limit = self::getDailyLimit();
+        $todayCount = self::getTodayCount();
+        $allowDownloads = $todayCount < $limit ? true : false;
+        return $allowDownloads;
     }
 }
