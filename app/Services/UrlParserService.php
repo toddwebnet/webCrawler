@@ -55,6 +55,9 @@ class UrlParserService
     {
         $parsedUrl = $this->parse();
 
+        if (strpos($url, '#') !== false) {
+            $url = substr($url, 0, strpos($url, '#'));
+        }
         if (strpos($url, 'http') === 0) {
             return $url;
         }

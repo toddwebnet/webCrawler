@@ -64,7 +64,7 @@ class BaseJobTest extends TestCase
             $this->assertEquals($msg,
                 'I got an error');
         }
-        
+
         $msg = 'Not expecting an error';
         try {
             $this->invokeMethod($baseJob, 'checkKeys', [

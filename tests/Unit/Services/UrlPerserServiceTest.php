@@ -74,6 +74,16 @@ class UrlParserServiceTest extends TestCase
     {
         $tests = [
             [
+                'url' => 'http://domain.com/path/',
+                'link' => '/unga.html#word',
+                'expected' => 'http://domain.com/unga.html'
+            ],
+            [
+                'url' => 'http://domain.com/path/',
+                'link' => '#word',
+                'expected' => 'http://domain.com/path/'
+            ],
+            [
                 'url' => 'http://domain.com',
                 'link' => '/site',
                 'expected' => 'http://domain.com/site'
