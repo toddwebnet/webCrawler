@@ -165,7 +165,7 @@ class UrlProviderTest extends TestCase
         factory(UrlOverflow::class)->create(['url_id' => $urlObj->id]);
 
         factory(UrlSize::class)->create([
-            'size' => UrlSize::DAILY_DOWNLOAD_LIMIT + 100
+            'size' => UrlSize::getDailyLimit() + 100
         ]);
 
         $count = UrlOverflow::all()->count();
