@@ -20,6 +20,7 @@ class PopUrl extends Command
 
         for ($x = 0; $x < $numPops; $x++) {
             app()->make(UrlProvider::class)->popToQueue();
+            sleep(5);
         }
     }
 }
