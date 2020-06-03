@@ -12,8 +12,14 @@ class PopUrl extends Command
 
     public function handle()
     {
-        $this->line("pop-url");
-        Log::info('pop-url');
-        app()->make(UrlProvider::class)->popToQueue();
+        $this->line("pop");
+        $numPops = env('NUM_POPS', 1);
+        if (!is_numeric($numPops)) {
+            $numPops = 1;
+        }
+
+        for ($x = 0; $x < $numPops; $x++) {
+            app()->make(UrlProvider::class)->popToQueue();
+        }
     }
 }

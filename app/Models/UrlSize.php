@@ -17,9 +17,13 @@ class UrlSize extends Model
 
     public $timestamps = false;
 
+    public static function getTodaySum(){
+        return self::where('timestamp', '>', strtotime('today 12:00 am'))->sum('size');
+
+    }
     public static function getTodayCount()
     {
-        return self::where('timestamp', '>', strtotime('today 12:00 am'))->sum('size');
+        return self::where('timestamp', '>', strtotime('today 12:00 am'))->count();
     }
 
     public static function getDailyLimit()
@@ -31,7 +35,7 @@ class UrlSize extends Model
     public static function allowDownloads()
     {
         $limit = self::getDailyLimit();
-        $todayCount = self::getTodayCount();
+        $todayCount = self::getTodaySum();
         $allowDownloads = $todayCount < $limit ? true : false;
         return $allowDownloads;
     }
