@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 
 class UrlSize extends Model
 {
@@ -17,10 +15,11 @@ class UrlSize extends Model
 
     public $timestamps = false;
 
-    public static function getTodaySum(){
+    public static function getTodaySum()
+    {
         return self::where('timestamp', '>', strtotime('today 12:00 am'))->sum('size');
-
     }
+
     public static function getTodayCount()
     {
         return self::where('timestamp', '>', strtotime('today 12:00 am'))->count();

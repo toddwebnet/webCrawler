@@ -27,11 +27,14 @@ class Test extends Command
         $allowDownloads = UrlSize::allowDownloads();
 
         $op = [
+            'allCount' =>  UrlSize::count(),
+            'allSum' => $this->formatBytes(UrlSize::sum('size')),
             'count' => UrlSize::getTodayCount(),
             'limit' => $this->formatBytes($limit),
             'today' => $this->formatBytes($todayCount),
             'remaining' => $this->formatBytes($limit-$todayCount),
             'allow' => $allowDownloads ? 'yes' : 'no'
+
         ];
         dump(
             $op
