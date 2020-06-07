@@ -1,5 +1,5 @@
 <?php
-use App\Http\Middleware\ApiAuthMiddleware;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,8 +17,9 @@ Route::get('/', function () {
 
 Route::post('token/get', 'TokenController@get');
 Route::get('token/get', 'TokenController@get');
-Route::middleware(ApiAuthMiddleware::class)->group(function () {
-
+Route::middleware(\App\Http\Middleware\ApiAuthMiddleware::class)->group(function () {
+    Route::get('html/pop', 'HtmlController@pop');
+    Route::get('html/mark-processed/{id}', 'HtmlController@markProcessed');
 
 });
 
