@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Middleware\ApiAuthMiddleware;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,5 +12,13 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return \App\Services\Responses\ApiResponse::successResponse('pong');
 });
+
+Route::post('token/get', 'TokenController@get');
+Route::get('token/get', 'TokenController@get');
+Route::middleware(ApiAuthMiddleware::class)->group(function () {
+
+
+});
+
