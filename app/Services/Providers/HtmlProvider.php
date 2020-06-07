@@ -37,4 +37,24 @@ class HtmlProvider
             'html' => $html
         ]);
     }
+
+    public function popHtmlForProcessing()
+    {
+        $html = Html::where('process_status', HTML::UNPROCESSED)->first();
+        if ($html !== null) {
+            $html->process_status = HTML::FLAGGED;
+            $html->save();
+        }
+        return $html;
+    }
+
+    public function markHtmlAsProcessed($htmlId)
+    {
+        $html = Html::find($htmlId);
+        if ($html !== null) {
+            $html->process_status = HTML::PROCESSED;
+            $html->save();
+        }
+        return $html;
+    }
 }

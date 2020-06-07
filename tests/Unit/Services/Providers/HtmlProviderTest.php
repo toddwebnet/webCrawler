@@ -59,4 +59,42 @@ class HtmlProviderTest extends TestCase
         $this->assertEquals(1, Html::count() - $count);
     }
 
+    public function testPopHtmlForProcessing()
+    {
+        $countUnprocessed = Html::where('process_status', HTML::UNPROCESSED)->count();
+        $countFlagged = Html::where('process_status', HTML::FLAGGED)->count();
+        $htmlProvider = new HtmlProvider();
+        $html = $htmlProvider->popHtmlForProcessing();
+        $this->assertEquals(-1, Html::where('process_status', HTML::UNPROCESSED)->count() - $countUnprocessed);
+        $this->assertEquals(1, Html::where('process_status', HTML::FLAGGED)->count() - $countFlagged);
+        $this->assertEquals($html->process_status, HTML::FLAGGED);
+
+        DB::update('update htmls set process_status = 3');
+
+        $html = $htmlProvider->popHtmlForProcessing();
+        $this->assertNull($html);
+
+        DB::update('update htmls set process_status = 0');
+
+    }
+
+    public function testMarkHtmlAsProcessed()
+    {
+        $countUnprocessed = Html::where('process_status', HTML::UNPROCESSED)->count();
+        $countFlagged = Html::where('process_status', HTML::FLAGGED)->count();
+        $countProcessed = Html::where('process_status', HTML::PROCESSED)->count();
+
+        $htmlProvider = new HtmlProvider();
+        $html = $htmlProvider->popHtmlForProcessing();
+        $this->assertEquals(-1, Html::where('process_status', HTML::UNPROCESSED)->count() - $countUnprocessed);
+        $this->assertEquals(1, Html::where('process_status', HTML::FLAGGED)->count() - $countFlagged);
+        $this->assertEquals($html->process_status, HTML::FLAGGED);
+
+        $html = $htmlProvider->markHtmlAsProcessed($html->id);
+        $this->assertEquals(1, Html::where('process_status', HTML::PROCESSED)->count() - $countProcessed);
+        $this->assertEquals($html->process_status, HTML::PROCESSED);
+
+        $html = $htmlProvider->markHtmlAsProcessed(Html::max('id') + 1);
+        $this->assertNull($html);
+    }
 }
